@@ -165,7 +165,7 @@ int main()
     {
         // per-frame time logic
         // --------------------
-        float currentFrame = glfwGetTime();
+        float currentFrame = (float)glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
@@ -270,16 +270,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (firstMouse)
     {
-        lastX = xpos;
-        lastY = ypos;
+        lastX = (float)xpos;
+        lastY = (float)ypos;
         firstMouse = false;
     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    float xoffset = (float)xpos - lastX;
+    float yoffset = lastY - (float)ypos; // reversed since y-coordinates go from bottom to top
 
-    lastX = xpos;
-    lastY = ypos;
+    lastX = (float)xpos;
+    lastY = (float)ypos;
 
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
@@ -288,5 +288,5 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(yoffset);
+    camera.ProcessMouseScroll((float)yoffset);
 }
