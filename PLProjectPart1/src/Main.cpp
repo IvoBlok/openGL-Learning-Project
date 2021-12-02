@@ -68,8 +68,8 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader lightingShader("src/shaders/simple_shader.vert", 
-        "src/shaders/simple_shader.frag");
+    Shader lightingShader("src/shaders/simple_lighting_shader.vert", 
+        "src/shaders/simple_lighting_shader.frag");
 
     Shader lightObjectShader("src/shaders/simple_light_object_shader.vert",
         "src/shaders/simple_light_object_shader.frag");
@@ -77,16 +77,16 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,    // top left 
+        // positions          // colors           
+         0.5f,  0.5f, -0.5f,     // top right
+         0.5f, -0.5f, -0.5f,     // bottom right
+        -0.5f, -0.5f, -0.5f,     // bottom left
+        -0.5f,  0.5f, -0.5f,     // top left 
 
-         0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+         0.5f,  0.5f,  0.5f,     // top right
+         0.5f, -0.5f,  0.5f,     // bottom right
+        -0.5f, -0.5f,  0.5f,     // bottom left
+        -0.5f,  0.5f,  0.5f,     // top left 
     };
 
     unsigned int indices[] = {
@@ -111,6 +111,7 @@ int main()
 
     glm::vec3 cubePos(1.0f);
     glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
     // initialize openGL settings
     // -------------------------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
@@ -133,59 +134,8 @@ int main()
     glBindVertexArray(lightCubeVAO);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // texture attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    // textures
-    // -------------------------------------------------------------------------------------------
-    unsigned int texture1, texture2;
-    stbi_set_flip_vertically_on_load(true);
-
-    // texture1
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    // set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // load and generate texture
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("models/textures/woodenCrateTexture.jpg", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data); // not needed?
-
-    // texture2
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    // set texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // load and generate texture
-    data = stbi_load("models/textures/brickWallTexture.jpg", &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-  
     
     // render loop
     // -----------
@@ -201,16 +151,9 @@ int main()
         // -----------
         processInput(window);
 
-        // bind textures on corresponding texture units
-        // -----------
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
-
         // render
         // -----------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // RENDER NON VERTEX-EMPTY OBJECTS
@@ -225,30 +168,33 @@ int main()
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // render box
-        glBindVertexArray(vertexVAO);
+        // model matrix
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePos);
+        model = glm::scale(model, glm::vec3(10.f));
         lightingShader.setMat4("model", model);
+
+        // render box
+        glBindVertexArray(vertexVAO);
 
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 
-        /*
+        
         // RENDER VERTEX-EMPTY OBJECTS
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-        lightingShader.use();
-        lightingShader.setVec3("lightObjectColor", 1.0f, 1.0f, 1.0f);
+        lightObjectShader.use();
+        lightObjectShader.setVec3("lightObjectColor", 1.0f, 1.0f, 1.0f);
 
         // pass projection + view matrix to shader
-        lightingShader.setMat4("projection", projection);
-        lightingShader.setMat4("view", view);
+        lightObjectShader.setMat4("projection", projection);
+        lightObjectShader.setMat4("view", view);
         model = glm::mat4(1.f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
+        lightObjectShader.setMat4("model", model);
 
         glBindVertexArray(lightCubeVAO);
         glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        */
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -----------

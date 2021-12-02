@@ -1,11 +1,12 @@
 ﻿  Main.cpp
 C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\shaders\Shader.h(56,40): warning C4101: 'e': unreferenced local variable
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(196,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(307,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(308,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(312,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(313,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(315,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(316,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(325,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(146,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(253,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(254,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(258,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(259,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(261,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(262,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(271,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   PLProjectPart1.vcxproj -> C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\x64\Debug\PLProjectPart1.exe
