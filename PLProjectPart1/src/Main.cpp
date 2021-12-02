@@ -69,8 +69,8 @@ int main()
     // build and compile our shader program
     // ------------------------------------
     // I know I know ugly hard coded paths, couldn't bother finding the relative path from the .exe to the shaders
-    Shader ourShader("C:/Users/Gebruiker/Documents/School/Studie/Programming/CPP/OpenGLSeries/PLProjectPart1/PLProjectPart1/src/shaders/simple_shader.vert", 
-        "C:/Users/Gebruiker/Documents/School/Studie/Programming/CPP/OpenGLSeries/PLProjectPart1/PLProjectPart1/src/shaders/simple_shader.frag");
+    Shader ourShader("src/shaders/simple_shader.vert", 
+        "src/shaders/simple_shader.frag");
 
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
