@@ -57,6 +57,8 @@ void main()
 
         float epsilon = light.cutOff - light.outerCutOff;
         spotDistanceFactor = clamp((cosTheta - light.outerCutOff) / epsilon, 0.0, 1.0); 
+
+        // could even make it also dependent on distance very similar to the point light
     }
 
     // ambient
