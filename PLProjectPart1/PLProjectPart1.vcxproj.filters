@@ -58,5 +58,14 @@
     <Image Include="models\textures\woodenCrateTexture.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="models\textures\container2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\textures\container2_specular.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="models\textures\container2_specular_grayscale.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

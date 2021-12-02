@@ -164,6 +164,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="models\textures\brickWallTexture.jpg" />
+    <Image Include="models\textures\container2.png" />
+    <Image Include="models\textures\container2_specular.png" />
+    <Image Include="models\textures\container2_specular_grayscale.png" />
     <Image Include="models\textures\woodenCrateTexture.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
