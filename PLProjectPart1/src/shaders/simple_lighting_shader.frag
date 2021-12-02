@@ -54,17 +54,6 @@ void main()
     } else if (light.lightType == 3) {
         lightDir = normalize(light.position - fragPos);
         float cosTheta = dot(lightDir, normalize(-light.direction));
-        /*if (cosTheta <= light.cutOff){
-            lightDir = vec3(0.0);
-        } else {
-            
-            // optional for fancy transition between light and dark area
-            //spotDistanceFactor = -light.inverseCutOffAngle * acos(cosTheta) + 1; // makes function going from 1 to 0 given theta going from 0 to light.cutoff
-            //spotDistanceFactor = pow(spotDistanceFactor, 1.0/2.0);
-
-            
-        }*/
-        // optional second option for transition
 
         float epsilon = light.cutOff - light.outerCutOff;
         spotDistanceFactor = clamp((cosTheta - light.outerCutOff) / epsilon, 0.0, 1.0); 
