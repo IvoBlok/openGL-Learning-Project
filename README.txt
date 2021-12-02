@@ -1,0 +1,1 @@
+OpenGL Project where I just try some techniques, with the prospect of trying some physics simulation (mainly collisions :))
