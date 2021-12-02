@@ -127,6 +127,19 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
     };
 
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     // first, configure the cube's VAO (and VBO)
     unsigned int VBO, cubeVAO;
     glGenVertexArrays(1, &cubeVAO);
@@ -206,13 +219,32 @@ int main()
 
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
-        lightingShader.setVec3("light.position", lightPos);
-        lightingShader.setVec3("viewPos", camera.Position);
 
         // light properties
+        lightingShader.setVec3("viewPos", camera.Position);
+        
         lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
         lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
         lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+        // directional light
+        // lightingShader.setVec4("light.direction", -0.2f, -1.0f, -0.3f); 
+        // lightingShader.setInt("light.lightType", 1);
+        
+        // point light
+        //lightingShader.setInt("light.lightType", 2);
+        //lightingShader.setVec3("light.position", lightPos);
+        //lightingShader.setFloat("light.constant", 1.0f);
+        //lightingShader.setFloat("light.linear", 0.09f);
+        //lightingShader.setFloat("light.quadratic", 0.032f);
+
+        // spot light
+        lightingShader.setInt("light.lightType", 3);
+        lightingShader.setVec3("light.position", camera.Position);
+        lightingShader.setVec3("light.direction", camera.Front);
+        lightingShader.setFloat("light.cutOff", glm::cos(glm::radians(16.f)));
+        lightingShader.setFloat("light.outerCutOff", glm::cos(glm::radians(20.f)));
+        lightingShader.setFloat("light.inverseCutOffAngle", 1 / glm::radians(16.f));
 
         // material properties
         lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
@@ -224,14 +256,21 @@ int main()
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // world transformation (for the vertices and normal vectors) matrices
-        glm::mat4 model = glm::mat4(1.0f);
-        lightingShader.setMat4("model", model);
-        lightingShader.setMat3("normalMatrix", glm::transpose(glm::inverse(model)));
-
-        // render the cube
+        // world transformation (for the vertices and normal vectors) matrices + render cubes
         glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glm::mat4 model = glm::mat4(1.0f);
+
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            lightingShader.setMat4("model", model);
+            lightingShader.setMat3("normalMatrix", glm::transpose(glm::inverse(model)));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
 
         // also draw the lamp object
