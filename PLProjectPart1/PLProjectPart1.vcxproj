@@ -155,6 +155,10 @@
     <ClInclude Include="src\shaders\Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\shaders\simple_lighting_shader.frag" />
+    <None Include="src\shaders\simple_lighting_shader.vert" />
+    <None Include="src\shaders\simple_light_object_shader.frag" />
+    <None Include="src\shaders\simple_light_object_shader.vert" />
     <None Include="src\shaders\simple_shader.frag" />
     <None Include="src\shaders\simple_shader.vert" />
   </ItemGroup>

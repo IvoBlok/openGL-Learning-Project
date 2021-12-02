@@ -35,6 +35,10 @@
     <None Include="src\shaders\simple_shader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="src\shaders\simple_lighting_shader.vert" />
+    <None Include="src\shaders\simple_lighting_shader.frag" />
+    <None Include="src\shaders\simple_light_object_shader.frag" />
+    <None Include="src\shaders\simple_light_object_shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\shaders\Shader.h">

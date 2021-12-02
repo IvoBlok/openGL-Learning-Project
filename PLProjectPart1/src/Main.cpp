@@ -68,10 +68,11 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    // I know I know ugly hard coded paths, couldn't bother finding the relative path from the .exe to the shaders
-    Shader ourShader("src/shaders/simple_shader.vert", 
+    Shader lightingShader("src/shaders/simple_shader.vert", 
         "src/shaders/simple_shader.frag");
 
+    Shader lightObjectShader("src/shaders/simple_light_object_shader.vert",
+        "src/shaders/simple_light_object_shader.frag");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -108,29 +109,18 @@ int main()
         2, 6, 7,
     };
 
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
+    glm::vec3 cubePos(1.0f);
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
     // initialize openGL settings
     // -------------------------------------------------------------------------------------------
     glEnable(GL_DEPTH_TEST);
 
-    unsigned int VBO, EBO, VAO;
-    glGenVertexArrays(1, &VAO);
+    unsigned int VBO, EBO, vertexVAO;
+    glGenVertexArrays(1, &vertexVAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    glBindVertexArray(vertexVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -138,7 +128,10 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    
+    unsigned int lightCubeVAO;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -192,22 +185,6 @@ int main()
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
-
-
-
-
-    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-    // -------------------------------------------------------------------------------------------
-    ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
-    ourShader.setInt("texture1", 0);
-    ourShader.setInt("texture2", 1);
-
-    // transformation matrices
-    // -------------------------------------------------------------------------------------------
-    unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-    unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
-    unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
-
   
     
     // render loop
@@ -236,30 +213,42 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // render the triangle
-        // -----------
-        ourShader.use();
+        // RENDER NON VERTEX-EMPTY OBJECTS
+        // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+        lightingShader.use(); 
+        lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
-        // pass projection matrix to shader
+        // pass projection + view matrix to shader
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        ourShader.setMat4("projection", projection);
+        glm::mat4 view = camera.GetViewMatrix(); 
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
 
-        // camera/view matrix
-        glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("view", view);
-
-        // render boxes
-        glBindVertexArray(VAO);
+        // render box
+        glBindVertexArray(vertexVAO);
         glm::mat4 model = glm::mat4(1.0f);
-        for (unsigned int i = 0; i < 10; i++) {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            ourShader.setMat4("model", model);
+        model = glm::translate(model, cubePos);
+        lightingShader.setMat4("model", model);
 
-            glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
-        }
+        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
+
+        /*
+        // RENDER VERTEX-EMPTY OBJECTS
+        // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+        lightingShader.use();
+        lightingShader.setVec3("lightObjectColor", 1.0f, 1.0f, 1.0f);
+
+        // pass projection + view matrix to shader
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
+        model = glm::mat4(1.f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+
+        glBindVertexArray(lightCubeVAO);
+        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
+        */
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -----------
@@ -269,7 +258,8 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &vertexVAO);
+    glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteBuffers(1, &VBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
@@ -307,7 +297,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
-
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
