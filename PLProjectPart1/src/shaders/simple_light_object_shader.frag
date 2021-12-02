@@ -1,10 +1,7 @@
 #version 330 core
-out vec4 fragColor;  
-
-uniform vec3 lightObjectColor;
-
+out vec4 FragColor;
 
 void main()
 {
-    fragColor = vec4(lightObjectColor, 1.0f);
+    FragColor = vec4(1.0);
 }

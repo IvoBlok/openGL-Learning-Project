@@ -1,1 +1,4 @@
-.vs
+*.vs
+*.log
+*.tlog
+*.1.tlog

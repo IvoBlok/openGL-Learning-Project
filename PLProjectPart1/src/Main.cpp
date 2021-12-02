@@ -30,8 +30,11 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
 // timing
-float deltaTime, lastFrame;
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
+// lighting
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -41,6 +44,10 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
     // glfw window creation
     // --------------------
@@ -53,10 +60,11 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+
+    // tell GLFW to capture our mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -66,145 +74,147 @@ int main()
         return -1;
     }
 
-    // build and compile our shader program
-    // ------------------------------------
-    Shader lightingShader("src/shaders/simple_lighting_shader.vert", 
-        "src/shaders/simple_lighting_shader.frag");
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
 
-    Shader lightObjectShader("src/shaders/simple_light_object_shader.vert",
-        "src/shaders/simple_light_object_shader.frag");
+    // build and compile our shader zprogram
+    // ------------------------------------
+    Shader lightingShader("src/shaders/simple_lighting_shader.vert", "src/shaders/simple_lighting_shader.frag");
+    Shader lightCubeShader("src/shaders/simple_light_object_shader.vert", "src/shaders/simple_light_object_shader.frag");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions          // colors           
-         0.5f,  0.5f, -0.5f,     // top right
-         0.5f, -0.5f, -0.5f,     // bottom right
-        -0.5f, -0.5f, -0.5f,     // bottom left
-        -0.5f,  0.5f, -0.5f,     // top left 
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-         0.5f,  0.5f,  0.5f,     // top right
-         0.5f, -0.5f,  0.5f,     // bottom right
-        -0.5f, -0.5f,  0.5f,     // bottom left
-        -0.5f,  0.5f,  0.5f,     // top left 
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
+
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
     };
-
-    unsigned int indices[] = {
-        0, 1, 3, // back side
-        1, 2, 3,
-
-        4, 5, 7, // front side
-        5, 6, 7,
- 
-        0, 3, 4, // y+ side
-        3, 7, 4,
-
-        1, 2, 5, // y- side
-        2, 6, 5,
-
-        0, 1, 4,// x+ side
-        1, 5, 4,
-
-        3, 2, 7,// x- side
-        2, 6, 7,
-    };
-
-    glm::vec3 cubePos(1.0f);
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
-    // initialize openGL settings
-    // -------------------------------------------------------------------------------------------
-    glEnable(GL_DEPTH_TEST);
-
-    unsigned int VBO, EBO, vertexVAO;
-    glGenVertexArrays(1, &vertexVAO);
+    // first, configure the cube's VAO (and VBO)
+    unsigned int VBO, cubeVAO;
+    glGenVertexArrays(1, &cubeVAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(vertexVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    unsigned int lightCubeVAO;
-    glGenVertexArrays(1, &lightCubeVAO);
-    glBindVertexArray(lightCubeVAO);
+    glBindVertexArray(cubeVAO);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    
+
+    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
+    unsigned int lightCubeVAO;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+
+    // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        // update deltaTime
-        // -----------
+        // per-frame time logic
+        // --------------------
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         // input
-        // -----------
+        // -----
         processInput(window);
 
         // render
-        // -----------
+        // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // RENDER NON VERTEX-EMPTY OBJECTS
-        // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-        lightingShader.use(); 
+        // be sure to activate shader when setting uniforms/drawing objects
+        lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
-        // pass projection + view matrix to shader
+        // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix(); 
+        glm::mat4 view = camera.GetViewMatrix();
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // model matrix
+        // world transformation
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePos);
-        model = glm::scale(model, glm::vec3(10.f));
         lightingShader.setMat4("model", model);
 
-        // render box
-        glBindVertexArray(vertexVAO);
+        // render the cube
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 
-        
-        // RENDER VERTEX-EMPTY OBJECTS
-        // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-        lightObjectShader.use();
-        lightObjectShader.setVec3("lightObjectColor", 1.0f, 1.0f, 1.0f);
-
-        // pass projection + view matrix to shader
-        lightObjectShader.setMat4("projection", projection);
-        lightObjectShader.setMat4("view", view);
-        model = glm::mat4(1.f);
+        // also draw the lamp object
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection", projection);
+        lightCubeShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f));
-        lightObjectShader.setMat4("model", model);
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lightCubeShader.setMat4("model", model);
 
         glBindVertexArray(lightCubeVAO);
-        glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -----------
+        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &vertexVAO);
+    glDeleteVertexArrays(1, &cubeVAO);
     glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteBuffers(1, &VBO);
 
@@ -243,6 +253,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
