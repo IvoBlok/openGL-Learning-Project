@@ -153,6 +153,7 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\external\stb_image.h" />
     <ClInclude Include="src\shaders\Shader.h" />
+    <ClInclude Include="src\shaders\SimpleLightingShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\simple_lighting_shader.frag" />

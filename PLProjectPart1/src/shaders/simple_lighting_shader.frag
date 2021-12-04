@@ -50,6 +50,7 @@ struct SpotLight {
 
 uniform int pointLightCount;
 uniform int spotLightCount;
+
 uniform DirLight dirLight;
 uniform PointLight pointLights[MAX_NR_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_NR_SPOT_LIGHTS];

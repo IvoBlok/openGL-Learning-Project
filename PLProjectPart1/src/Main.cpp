@@ -6,12 +6,15 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 #include <shaders/Shader.h>
+#include <shaders/SimpleLightingShader.h>
+
 #include <Camera.h>
 
 #include <external/stb_image.h>
 
 #include <iostream>
 #include <cmath>
+
 
 // function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -77,7 +80,7 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader lightingShader("src/shaders/simple_lighting_shader.vert", "src/shaders/simple_lighting_shader.frag");
+    simpleLightingShader lightingShader("src/shaders/simple_lighting_shader.vert", "src/shaders/simple_lighting_shader.frag");
     Shader lightCubeShader("src/shaders/simple_light_object_shader.vert", "src/shaders/simple_light_object_shader.frag");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -201,6 +204,12 @@ int main()
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, specularMap);
 
+    //lightingShader.createEmptyPointLights(lightingShader, 4);
+    //lightingShader.createEmptySpotLights(lightingShader, 1);
+
+    // define light data that doesn't need to be updated -> in this case I don't need to specify the variables, because they overlap with the default ones
+    //SpotLightData spotLightData = SpotLightData();
+    //lightingShader.createSpotLight(lightingShader, spotLightData);
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -228,69 +237,29 @@ int main()
         lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
         lightingShader.setFloat("material.shininess", 64.0f);
 
-        /*
-           Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index
-           the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
-           by defining light types as classes and set their values in there, or by using a more efficient uniform approach
-           by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
-        */
-
-        lightingShader.setInt("pointLightCount", 4);
-        lightingShader.setInt("spotLightCount", 1);
-
         // directional light
-        lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        DirLightData directionalLight{glm::vec3(-.2f, -1.f, -.3f), glm::vec3(.2f), glm::vec3(.4f), glm::vec3(.5f)};   
+        lightingShader.setDirLight(directionalLight);
+
         // point light 1
-        lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-        lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        lightingShader.setFloat("pointLights[0].constant", 1.0f);
-        lightingShader.setFloat("pointLights[0].linear", 0.09);
-        lightingShader.setFloat("pointLights[0].quadratic", 0.032);
-        lightingShader.setInt("pointLights[0].enabled", 1);
+        lightingShader.getPointLightData(0).updateData(lightingShader.getPointLightData(0), pointLightPositions[0], 1.0f, 0.09f, 0.032f, glm::vec3(0.05f), glm::vec3(0.8f), glm::vec3(1.f), 1);
+        lightingShader.updatePointLight(lightingShader, 0);
+
         // point light 2
-        lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-        lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        lightingShader.setFloat("pointLights[1].constant", 1.0f);
-        lightingShader.setFloat("pointLights[1].linear", 0.09);
-        lightingShader.setFloat("pointLights[1].quadratic", 0.032);
-        lightingShader.setInt("pointLights[1].enabled", 1);
+        lightingShader.getPointLightData(1).updateData(lightingShader.getPointLightData(1), pointLightPositions[1], 1.0f, 0.09f, 0.032f, glm::vec3(0.05f), glm::vec3(0.8f), glm::vec3(1.f), 1);
+        lightingShader.updatePointLight(lightingShader, 1);
+
         // point light 3
-        lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-        lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-        lightingShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-        lightingShader.setFloat("pointLights[2].constant", 1.0f);
-        lightingShader.setFloat("pointLights[2].linear", 0.09);
-        lightingShader.setFloat("pointLights[2].quadratic", 0.032);
-        lightingShader.setInt("pointLights[2].enabled", 1);
+        lightingShader.getPointLightData(2).updateData(lightingShader.getPointLightData(2), pointLightPositions[2], 1.0f, 0.09f, 0.032f, glm::vec3(0.05f), glm::vec3(0.8f), glm::vec3(1.f), 1);
+        lightingShader.updatePointLight(lightingShader, 2);
+
         // point light 4
-        lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-        lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-        lightingShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-        lightingShader.setFloat("pointLights[3].constant", 1.0f);
-        lightingShader.setFloat("pointLights[3].linear", 0.09);
-        lightingShader.setFloat("pointLights[3].quadratic", 0.032);
-        lightingShader.setInt("pointLights[4].enabled", 1);
+        lightingShader.getPointLightData(3).updateData(lightingShader.getPointLightData(3), pointLightPositions[3], 1.0f, 0.09f, 0.032f, glm::vec3(0.05f), glm::vec3(0.8f), glm::vec3(1.f), 1);
+        lightingShader.updatePointLight(lightingShader, 3);
+
         // spotLight
-        lightingShader.setVec3("spotLights[0].position", camera.Position);
-        lightingShader.setVec3("spotLights[0].direction", camera.Front);
-        lightingShader.setVec3("spotLights[0].ambient", 0.0f, 0.0f, 0.0f);
-        lightingShader.setVec3("spotLights[0].diffuse", 1.0f, 1.0f, 1.0f);
-        lightingShader.setVec3("spotLights[0].specular", 1.0f, 1.0f, 1.0f);
-        lightingShader.setFloat("spotLights[0].constant", 1.0f);
-        lightingShader.setFloat("spotLights[0].linear", 0.09f);
-        lightingShader.setFloat("spotLights[0].quadratic", 0.032f);
-        lightingShader.setFloat("spotLights[0].cutOff", glm::cos(glm::radians(12.5f)));
-        lightingShader.setFloat("spotLights[0].outerCutOff", glm::cos(glm::radians(15.0f)));
-        lightingShader.setInt("spotLights[0].enabled", 1);
+        lightingShader.getSpotLightData(0).updateData(lightingShader.getSpotLightData(0), camera.Position, camera.Front, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(15.f)), 1.f, .09f, .032f, glm::vec3(0.01f), glm::vec3(1.f), glm::vec3(1.f), 1);
+        lightingShader.updateSpotLight(lightingShader, 0);
 
 
         // view/projection transformations
@@ -354,6 +323,7 @@ int main()
     glfwTerminate();
     return 0;
 }
+
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
