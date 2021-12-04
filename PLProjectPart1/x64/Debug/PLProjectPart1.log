@@ -1,3 +1,11 @@
 ﻿  Main.cpp
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(252,62): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(253,66): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(261,62): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(262,66): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(270,62): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(271,66): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(279,62): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\Main.cpp(280,66): warning C4305: 'argument': truncation from 'double' to 'float'
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   PLProjectPart1.vcxproj -> C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\x64\Debug\PLProjectPart1.exe
