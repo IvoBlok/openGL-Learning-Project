@@ -120,11 +120,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <CompileAsManaged>false</CompileAsManaged>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GLFW-3.3\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GLFW-3.3\glfw3.lib;opengl32.lib;ASSIMP-3.3.1\assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,13 +136,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <CompileAsManaged>false</CompileAsManaged>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GLFW-3.3\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GLFW-3.3\glfw3.lib;opengl32.lib;ASSIMP-3.3.1\assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -150,25 +152,21 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\external\stb_image.h" />
+    <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\shaders\Shader.h" />
     <ClInclude Include="src\shaders\SimpleLightingShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\shaders\model_loading.frag" />
     <None Include="src\shaders\simple_lighting_shader.frag" />
     <None Include="src\shaders\simple_lighting_shader.vert" />
     <None Include="src\shaders\simple_light_object_shader.frag" />
     <None Include="src\shaders\simple_light_object_shader.vert" />
     <None Include="src\shaders\simple_shader.frag" />
     <None Include="src\shaders\simple_shader.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="models\textures\brickWallTexture.jpg" />
-    <Image Include="models\textures\container2.png" />
-    <Image Include="models\textures\container2_specular.png" />
-    <Image Include="models\textures\container2_specular_grayscale.png" />
-    <Image Include="models\textures\woodenCrateTexture.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -39,6 +39,7 @@
     <None Include="src\shaders\simple_lighting_shader.frag" />
     <None Include="src\shaders\simple_light_object_shader.frag" />
     <None Include="src\shaders\simple_light_object_shader.vert" />
+    <None Include="src\shaders\model_loading.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\shaders\Shader.h">
@@ -53,22 +54,11 @@
     <ClInclude Include="src\shaders\SimpleLightingShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="models\textures\brickWallTexture.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="models\textures\woodenCrateTexture.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="models\textures\container2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="models\textures\container2_specular.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="models\textures\container2_specular_grayscale.png">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClInclude Include="src\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
