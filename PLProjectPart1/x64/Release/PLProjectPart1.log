@@ -1,0 +1,10 @@
+﻿  Main.cpp
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\MainExpansion.h(15,35): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\MainExpansion.h(26,36): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\PLProjectPart1\src\MainExpansion.h(35,80): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating code
+  2 of 1322 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    10 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  PLProjectPart1.vcxproj -> C:\Users\Gebruiker\Documents\School\Studie\Programming\CPP\OpenGLSeries\GLProjectPart1\x64\Release\PLProjectPart1.exe

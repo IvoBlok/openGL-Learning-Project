@@ -24,7 +24,6 @@ const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
-
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
 class Camera
 {
@@ -118,7 +117,33 @@ public:
             Zoom = 45.0f;
     }
 
+    void updateShaders(Shader& shader, int SCR_WIDTH, int SCR_HEIGHT) {
+        glm::mat4 projection = glm::perspective(glm::radians(Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = GetViewMatrix();
+        shader.setVec3("viewPos", Position);
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
+    }
+
+    void updateShaders(Shader* shader, int SCR_WIDTH, int SCR_HEIGHT) {
+        glm::mat4 projection = glm::perspective(glm::radians(Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = GetViewMatrix();
+        shader->setVec3("viewPos", Position);
+        shader->setMat4("projection", projection);
+        shader->setMat4("view", view);
+    }
+
+    void updateShaders(int SCR_WIDTH, int SCR_HEIGHT) {
+        for (size_t i = 0; i < defaultShaders.size(); i++)
+        {
+            updateShaders(defaultShaders[i], SCR_WIDTH, SCR_HEIGHT);
+        }
+    }
+
+    void setDefaultShaders(std::vector<Shader*> shaders) { defaultShaders = shaders; }
+
 private:
+    std::vector<Shader*> defaultShaders;
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors()
     {
